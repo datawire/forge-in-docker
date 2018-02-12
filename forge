@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+set -eo pipefail
+
+PROGRAM="$(basename $0)"
+IMAGE="datawire/forge-in-docker"
+VERSION="0.4.1"
+
+error() {
+  error_code=$1
+  echo "ERROR: $2" >&2
+  echo "($PROGRAM wrapper version: $VERSION, error code: $error_code )" &>2
+  exit $1
+}
+
+check_cmd_in_path() {
+  cmd=$1
+  which $cmd > /dev/null 2>&1 || error 1 "'$cmd' not found on \$PATH!"
+}
+
+check_cmd_in_path docker
+
+# Set up mounted volumes, environment, and run our containerized command
+exec docker run \
+  --interactive \
+  --tty \
+  --rm \
+  --volume ${HOME}/.kube:/home/user/.kube \
+  --volume ${HOME}/.aws:/home/user/.aws:ro \
+  --volume $(pwd):/home/user/work \
+  --workdir /home/user/work \
+  -e "COMMAND=${COMMAND}" \
+  -e HOST_USER_ID=$(id -u) \
+  "$IMAGE:$VERSION" "$@"

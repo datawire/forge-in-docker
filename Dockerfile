@@ -10,7 +10,7 @@ ENV GOSU_VERSION=1.10
 ENV KUBECTL_VERSION=v1.9.3
 ENV FORGE_VERSION=0.4.1
 
-RUN apk --no-cache add ca-certificates python2 python2-dev \
+RUN apk --no-cache add ca-certificates docker python2 python2-dev \
     && apk --no-cache add --virtual build-dependencies curl \
     && curl -O --location --silent --show-error https://github.com/tianon/gosu/releases/download/${GOSU_VERSION}/gosu-amd64 \
     && mv gosu-amd64 /usr/local/bin/gosu \
